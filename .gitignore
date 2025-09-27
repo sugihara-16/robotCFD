@@ -1,0 +1,39 @@
+# ---------------------------------
+# OpenFOAM Git Ignore Template
+# ---------------------------------
+
+[1-9]*/      # 1, 2, 10, 100 etc
+[0-9]*.[1-9]*/ # 1.5, 10.25 etc
+
+postProcessing/
+processor*/
+
+log.*
+*.log
+
+*.OpenFOAM
+*.foam
+*.obj
+*.vtk
+*.vtu
+*.csv
+*.stl
+*.eMesh
+*:Zone.Identifier
+
+*/constant/polyMesh/
+*/constant/extendedFeatureEdgeMesh/
+*/constant/triSurface/
+
+*/constant/turbulenceProperties
+
+ParaView* 
+*.pyc
+__pycache__/
+
+.DS_Store
+Thumbs.db
+
+*~
+\#*\#
+*\#
