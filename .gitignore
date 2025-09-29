@@ -2,8 +2,8 @@
 # OpenFOAM Git Ignore Template
 # ---------------------------------
 
-[1-9]*/      # 1, 2, 10, 100 etc
-[0-9]*.[1-9]*/ # 1.5, 10.25 etc
+*/[1-9]*/
+*/[0-9]*.[0-9]*/
 
 postProcessing/
 processor*/
