@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+propellerForces
+{
+    type          forces;
+
+    libs          ("libforces.so");
+
+    writeControl  timeStep;
+    timeInterval  10;
+
+    log           yes;
+
+    patches       ("propeller.*");
+    rho           rhoInf;     // Indicates incompressible
+    log           true;
+    rhoInf        1.225;          // Redundant for incompressible
+
+    CofR          (0 0 0);    // Rotation around centre line of propeller
+    pitchAxis     (0 1 0);
+}
+
+ductInnerForces
+{
+    type          forces;
+
+    libs          ("libforces.so");
+
+    writeControl  timeStep;
+    timeInterval  10;
+
+    log           yes;
+
+    patches       ("ductInner");
+    rho           rhoInf;     // Indicates incompressible
+    log           true;
+    rhoInf        1.225;          // Redundant for incompressible
+
+    CofR          (0 0 0);    // Rotation around centre line of propeller
+    pitchAxis     (0 1 0);
+}
+
+ductOuterForces
+{
+    type          forces;
+
+    libs          ("libforces.so");
+
+    writeControl  timeStep;
+    timeInterval  10;
+
+    log           yes;
+
+    patches       ("ductOuter");
+    rho           rhoInf;     // Indicates incompressible
+    log           true;
+    rhoInf        1.225;          // Redundant for incompressible
+
+    CofR          (0 0 0);    // Rotation around centre line of propeller
+    pitchAxis     (0 1 0);
+}
+
+totalForces
+{
+    type          forces;
+
+    libs          ("libforces.so");
+
+    writeControl  timeStep;
+    timeInterval  10;
+
+    log           yes;
+
+    patches       ("propeller.*" "duct.*");
+    rho           rhoInf;     // Indicates incompressible
+    log           true;
+    rhoInf        1.225;          // Redundant for incompressible
+
+    CofR          (0 0 0);    // Rotation around centre line of propeller
+    pitchAxis     (0 1 0);
+}
+
+
+// ************************************************************************* //
