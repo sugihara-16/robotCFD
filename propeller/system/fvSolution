@@ -17,12 +17,20 @@ solvers
 {
     p
     {
-        solver          GAMG;
-        smoother        DICGaussSeidel;
-        tolerance       1e-6;
-        relTol          0.01;
-        cacheAgglomeration no;
-        maxIter         50;
+        // solver          GAMG;
+        // smoother        DICGaussSeidel;
+        // tolerance       1e-6;
+        // relTol          0.01;
+        // cacheAgglomeration no;
+        // maxIter         50;
+      solver GAMG;
+      smoother DICGaussSeidel;
+      tolerance 1e-6;
+      relTol 0.05;               // 初期は0.05〜0.1で様子見
+      cacheAgglomeration yes;
+      nCellsInCoarsestLevel 50;  // 50〜100推奨
+      agglomerator faceAreaPair;
+      maxIter         50;
     }
 
     pFinal
