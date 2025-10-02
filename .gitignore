@@ -13,7 +13,7 @@ log.*
 
 *.OpenFOAM
 *.foam
-*.obj
+#*.obj
 *.vtk
 *.vtu
 *.csv
