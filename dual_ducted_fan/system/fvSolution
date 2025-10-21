@@ -1,0 +1,108 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 | OpenFOAM v11                                   |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+
+solvers
+{
+    // Pressure (inner PISO/PIMPLE solve)
+    p
+    {
+        solver              GAMG;
+        smoother            DICGaussSeidel;
+        tolerance           1e-6;
+        relTol              0.1;              // 初期は緩め
+        cacheAgglomeration  yes;
+        nCellsInCoarsestLevel 100;
+        agglomerator        faceAreaPair;
+        maxIter             40;
+    }
+
+    // Final pressure (outer correctorの最後はキッチリ)
+    pFinal
+    {
+        $p;
+        relTol              0;
+        tolerance           1e-7;
+    }
+
+    // pcorr for flux correction / AMI
+    "pcorr.*"
+    {
+        $p;
+        tolerance           1e-2;
+        relTol              0;
+        maxIter             10;
+    }
+
+    // MeshPhi for dynamic stitching
+    MeshPhi
+    {
+        solver              smoothSolver;
+        smoother            symGaussSeidel;
+        tolerance           1e-2;
+        relTol              0;
+    }
+
+    // Momentum & turbulence scalars
+    "(U|k|epsilon)"
+    {
+        solver              smoothSolver;
+        smoother            symGaussSeidel;
+        tolerance           1e-6;
+        relTol              0.2;               // まずは大きめに緩和
+        nSweeps             2;
+    }
+
+    "(U|k|epsilon)Final"
+    {
+        $U;
+        relTol              0;
+        tolerance           1e-7;
+    }
+}
+
+PIMPLE
+{
+    nOuterCorrectors           1;
+    nCorrectors                2;
+    nNonOrthogonalCorrectors   1;
+
+    correctPhi                 yes;
+    correctMeshPhi             yes;
+
+    // 乱流は最終反復のみ更新（初期の暴発防止）
+    turbulenceOnFinalIterOnly  yes;
+
+    // 収束判定（お好みで使用可）
+    residualControl
+    {
+        p           1e-3;
+        U           1e-4;
+        "(k|epsilon)" 1e-4;
+    }
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p           0.3;
+    }
+    equations
+    {
+        U           0.4;
+        k           0.4;
+        epsilon     0.4;
+    }
+}
+
+cache
+{
+    grad(U);
+}

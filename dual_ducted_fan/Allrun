@@ -1,0 +1,31 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+rm log.foamRun
+rm log.decomposePar
+rm -rf processor*
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Mesh if necessary
+# if ! cloneMesh ../../incompressibleVoF/propeller .
+# then
+#     ./Allmesh
+# else
+#     runApplication decomposePar -noFields
+# fi
+runApplication decomposePar -noFields
+
+# Copy the fields into the processor directories
+runApplication -a decomposePar -fields -copyZero
+
+# Run
+runParallel $(getApplication)
+# mpirun -np 32 --use-hwthread-cpus --bind-to hwthread --map-by hwthread \
+#   foamRun -parallel
+
+# Reconstruct
+runApplication reconstructPar
+
+#------------------------------------------------------------------------------

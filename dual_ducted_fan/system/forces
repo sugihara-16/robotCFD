@@ -1,0 +1,131 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+propellerForces_A
+{
+    type          forces;
+    libs          ("libforces.so");
+    // writeControl  timeStep;
+    // timeInterval  20;
+    writeControl    adjustableRunTime;
+    writeInterval   0.0001;
+    log           yes;
+    patches       ("propeller.*_A");
+    rho           rhoInf;
+    rhoInf        1.225;
+    CofR          (0.19 0 -0.2);
+    pitchAxis     (0 1 0);
+}
+
+propellerForces_B
+{
+    type          forces;
+    libs          ("libforces.so");
+    // writeControl  timeStep;
+    // timeInterval  20;
+    writeControl    adjustableRunTime;
+    writeInterval   0.0001;
+    log           yes;
+    patches       ("propeller.*_B");
+    rho           rhoInf;
+    rhoInf        1.225;
+    CofR          (-0.19 0 -0.2);
+    pitchAxis     (0 1 0);
+}
+
+propellerForces_C
+{
+    type          forces;
+    libs          ("libforces.so");
+    // writeControl  timeStep;
+    // timeInterval  20;
+    writeControl    adjustableRunTime;
+    writeInterval   0.0001;    
+    log           yes;
+    patches       ("propeller.*_C");
+    rho           rhoInf;
+    rhoInf        1.225;
+    CofR          (0 0 0);
+    pitchAxis     (0 1 0);
+}
+
+ductInnerForces_A
+{
+    type          forces;
+    libs          ("libforces.so");
+    // writeControl  timeStep;
+    // timeInterval  20;
+    writeControl    adjustableRunTime;
+    writeInterval   0.0001;
+    log           yes;
+    patches       ("ductInner_A");
+    rho           rhoInf;
+    rhoInf        1.225;
+    CofR          (0.19 0 -0.2);
+    pitchAxis     (0 1 0);
+}
+
+ductInnerForces_B
+{
+  $ductInnerForces_A;
+  patches ("ductInner_B");
+  CofR          (-0.19 0 -0.2);
+}
+
+ductInnerForces_C
+{
+  $ductInnerForces_A;
+  patches ("ductInner_C");
+  CofR          (0 0 0.2);
+}
+
+ductOuterForces_A
+{
+    type          forces;
+    libs          ("libforces.so");
+    // writeControl  timeStep;
+    // timeInterval  20;
+    writeControl    adjustableRunTime;
+    writeInterval   0.0001;
+    log           yes;
+    patches       ("ductOuter_A");
+    rho           rhoInf;
+    rhoInf        1.225;
+    CofR          (0.19 0 -0.2);
+    pitchAxis     (0 1 0);
+}
+ductOuterForces_B
+{
+  $ductOuterForces_A;
+  patches ("ductOuter_B");
+  CofR          (-0.19 0 -0.2);
+}
+ductOuterForces_C
+{
+  $ductOuterForces_A;
+  patches ("ductOuter_C");
+  CofR          (0 0 0.2);
+}
+
+totalForces
+{
+    type          forces;
+    libs          ("libforces.so");
+    // writeControl  timeStep;
+    // timeInterval  20;
+    writeControl    adjustableRunTime;
+    writeInterval   0.0001;
+    log           yes;
+
+
+    patches       ("propeller.*" "duct.*");
+    rho           rhoInf;
+    rhoInf        1.225;
+    CofR          (0 0 0);
+    pitchAxis     (0 1 0);
+}

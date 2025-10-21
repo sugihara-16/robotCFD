@@ -1,0 +1,32 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Mesh in parallel
+runApplication blockMesh
+runApplication surfaceFeatures
+runApplication decomposePar -noFields
+runParallel snappyHexMesh -overwrite
+
+# # Create the sliding patches (from createBafflesDict with A/B/C entries)
+runParallel createBaffles -overwrite
+runParallel splitBaffles -overwrite
+
+# Renumber
+runParallel renumberMesh -noFields -overwrite
+
+# # Create non-conformal couples (A/B/C の3基ぶん)
+runApplication reconstructPar -constant
+createNonConformalCouples -overwrite nonCoupleA1 nonCoupleA2
+createNonConformalCouples -overwrite nonCoupleB1 nonCoupleB2
+createNonConformalCouples -overwrite nonCoupleC1 nonCoupleC2
+rm log.decomposePar
+runApplication decomposePar -noFields
+
+rm log.decomposePar
+runApplication decomposePar -noFields
+
+rm log.reconstructPar
+#------------------------------------------------------------------------------

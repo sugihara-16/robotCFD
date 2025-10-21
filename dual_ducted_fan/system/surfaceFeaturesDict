@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox          |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  11                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      surfaceFeaturesDict;
+}
+
+// Surfaces to extract feature edges from
+surfaces
+(
+    // base (outer domain & originals)
+    "propeller-innerCylinder.obj"
+    "propeller-outerCylinder.obj"
+    "propeller.obj"
+    "duct.obj"
+
+    // A/B/C replicas
+    "propeller-innerCylinder_A.obj"
+    "propeller-innerCylinder_B.obj"
+    "propeller-innerCylinder_C.obj"
+
+    "propeller_A.obj"
+    "propeller_B.obj"
+    "propeller_C.obj"
+
+    "duct_A.obj"
+    "duct_B.obj"
+    "duct_C.obj"
+);
+
+// Identify a feature when angle between faces < includedAngle
+includedAngle   135;
+
+trimFeatures
+{
+    // Remove features with fewer than the specified number of edges
+    minElem         10;
+}

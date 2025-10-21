@@ -1,0 +1,245 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox          |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  11                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile { format ascii; class dictionary; object snappyHexMeshDict; }
+
+// Steps
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+// -------------------- Geometry --------------------
+geometry
+{
+  outerCylinder
+  {
+    type triSurfaceMesh;
+    file "propeller-outerCylinder.obj";
+    regions
+    {
+      outerCylinderWall { name outerCylinder; }
+      outerCylinderInlet { name inlet; }
+      outerCylinderOutlet { name outlet; }
+    }
+  }
+
+  // A
+  innerCylinder_A { type triSurfaceMesh; file "propeller-innerCylinder_A.obj";
+    regions { innerCylinder { name innerCylinder_A; } } }
+  middleCylinder_A { type triSurfaceMesh; file "propeller-middleCylinder_A.obj";
+    regions { middleCylinder { name middleCylinder_A; } } }
+  propeller_A { type triSurfaceMesh; file "propeller_A.obj";
+    regions { propellerStem { name propellerStem_A; } propellerTip { name propellerTip_A; } } }
+  duct_A { type triSurfaceMesh; file "duct_A.obj";
+    regions { ductInner { name ductInner_A; } ductOuter { name ductOuter_A; } } }
+
+  // B
+  innerCylinder_B { type triSurfaceMesh; file "propeller-innerCylinder_B.obj";
+    regions { innerCylinder { name innerCylinder_B; } } }
+  middleCylinder_B { type triSurfaceMesh; file "propeller-middleCylinder_B.obj";
+    regions { middleCylinder { name middleCylinder_B; } } }
+  propeller_B { type triSurfaceMesh; file "propeller_B.obj";
+    regions { propellerStem { name propellerStem_B; } propellerTip { name propellerTip_B; } } }
+  duct_B { type triSurfaceMesh; file "duct_B.obj";
+    regions { ductInner { name ductInner_B; } ductOuter { name ductOuter_B; } } }
+
+  // C
+  innerCylinder_C { type triSurfaceMesh; file "propeller-innerCylinder_C.obj";
+    regions { innerCylinder { name innerCylinder_C; } } }
+  middleCylinder_C { type triSurfaceMesh; file "propeller-middleCylinder_C.obj";
+    regions { middleCylinder { name middleCylinder_C; } } }
+  propeller_C { type triSurfaceMesh; file "propeller_C.obj";
+    regions { propellerStem { name propellerStem_C; } propellerTip { name propellerTip_C; } } }
+  duct_C { type triSurfaceMesh; file "duct_C.obj";
+    regions { ductInner { name ductInner_C; } ductOuter { name ductOuter_C; } } }
+}
+
+// ---------------- castellatedMeshControls ----------------
+castellatedMeshControls
+{
+  maxLocalCells       100000;
+  maxGlobalCells      2000000;
+  minRefinementCells  0;
+  maxLoadUnbalance    0.10;
+  nCellsBetweenLevels 2;     // ★段差を戻す（2）
+
+  // Feature edges
+  features
+  (
+    { file "propeller-innerCylinder.eMesh"; level 4; }
+    { file "propeller-outerCylinder.eMesh"; level 0; }
+    { file "propeller.eMesh";               level 4; }
+    { file "duct.eMesh";                    level 3; }
+
+    { file "propeller-innerCylinder_A.eMesh"; level 4; }
+    { file "propeller-innerCylinder_B.eMesh"; level 4; }
+    { file "propeller-innerCylinder_C.eMesh"; level 5; }
+    { file "propeller_A.eMesh"; level 4; }
+    { file "propeller_B.eMesh"; level 4; }
+    { file "propeller_C.eMesh"; level 4; }
+    { file "duct_A.eMesh"; level 3; }
+    { file "duct_B.eMesh"; level 3; }
+    { file "duct_C.eMesh"; level 3; }
+  );
+
+  // Surface-based refinement（case1 準拠＋控えめ）
+  refinementSurfaces
+  {
+    outerCylinder
+    {
+      level (0 0);
+      regions
+      {
+        inlet  { level (0 0); patchInfo { type patch; } }
+        outlet { level (0 0); patchInfo { type patch; } }
+        outerCylinderWall { level (0 0); patchInfo { type wall; } }
+      }
+    }
+
+    // Fan A
+    innerCylinder_A { level (4 4); cellZone innerCylinder_A; faceZone innerCylinder_A; mode inside; }
+    propeller_A
+    {
+      level (4 4);
+      regions { propellerTip_A { level (4 5); } }   // ★先端だけ+1
+    }
+    duct_A
+    {
+      level (3 4);
+      regions
+      {
+        ductInner_A { level (5 5); patchInfo { type wall; } }
+        ductOuter_A { level (3 4); patchInfo { type wall; } }
+      }
+    }
+
+    // Fan B
+    innerCylinder_B { level (5 5); cellZone innerCylinder_B; faceZone innerCylinder_B; mode inside; }
+    propeller_B
+    {
+      level (5 5);
+      regions { propellerTip_B { level (5 6); } }
+    }
+    duct_B
+    {
+      level (3 4);
+      regions
+      {
+        ductInner_B { level (6 6); patchInfo { type wall; } }
+        ductOuter_B { level (3 4); patchInfo { type wall; } }
+      }
+    }
+
+    // Fan C
+    innerCylinder_C { level (5 5); cellZone innerCylinder_C; faceZone innerCylinder_C; mode inside; }
+    propeller_C
+    {
+      level (4 4);
+      regions { propellerTip_C { level (4 5); } }
+    }
+    duct_C
+    {
+      level (3 4);
+      regions
+      {
+        ductInner_C { level (5 5); patchInfo { type wall; } }
+        ductOuter_C { level (3 4); patchInfo { type wall; } }
+      }
+    }
+  }
+
+  resolveFeatureAngle 30;
+
+  // Region-wise refinement（距離細分化は控えめに）
+  refinementRegions
+  {
+    innerCylinder_A { mode inside; level 4; }
+    middleCylinder_A{ mode inside; level 3; }
+    innerCylinder_B { mode inside; level 5; }
+    middleCylinder_B{ mode inside; level 4; }
+    innerCylinder_C { mode inside; level 5; }
+    middleCylinder_C{ mode inside; level 4; }
+
+    duct_A      { mode distance; levels ((0.002 5) (0.005 4) (0.010 3)); }
+    duct_B      { mode distance; levels ((0.002 6) (0.005 5) (0.010 4)); }
+    duct_C      { mode distance; levels ((0.002 6) (0.005 5) (0.010 4)); }
+    propeller_A { mode distance; levels ((0.0012 5) (0.0030 4)); }
+    propeller_B { mode distance; levels ((0.0012 6) (0.0030 5)); }
+    propeller_C { mode distance; levels ((0.0012 6) (0.0030 5)); }
+  }
+
+  // Selection
+  insidePoint (0 0 0);
+  allowFreeStandingZoneFaces false;
+}
+
+// -------------------- snapControls（保守設定） --------------------
+snapControls
+{
+  nSmoothPatch     5;
+  tolerance        2.0;
+  nSolveIter       300;
+  nRelaxIter       10;
+  nFeatureSnapIter 20;
+
+  implicitFeatureSnap true;
+  explicitFeatureSnap false;
+  multiRegionFeatureSnap true;
+
+  // nSmoothPatch     3;
+  // tolerance        1.0;
+  // nSolveIter       300;
+  // nRelaxIter       10;
+  // nFeatureSnapIter 30; 
+
+  // implicitFeatureSnap true;
+  // explicitFeatureSnap true;
+  // multiRegionFeatureSnap true;
+}
+
+// -------------------- addLayersControls (off) --------------------
+addLayersControls
+{
+  relativeSizes true;
+  layers { }
+  expansionRatio 1.0;
+  finalLayerThickness 0.3;
+  minThickness 0.1;
+  nGrow 0;
+  featureAngle 30;
+  nRelaxIter 3;
+  nSmoothSurfaceNormals 1;
+  nSmoothNormals 3;
+  nSmoothThickness 10;
+  maxFaceThicknessRatio 0.5;
+  maxThicknessToMedialRatio 0.3;
+  minMedianAxisAngle 90;
+  nBufferCellsNoExtrude 0;
+  nLayerIter 50;
+}
+
+// -------------------- meshQualityControls --------------------
+meshQualityControls
+{
+  maxNonOrtho 60;
+  maxBoundarySkewness 20;
+  maxInternalSkewness 4;
+  maxConcave 80;
+  minVol -1e30;
+  minTetQuality -1;
+  minTwist 0.01;
+  minDeterminant 0.001;
+  minFaceWeight 0.05;
+  minVolRatio 0.01;
+
+  nSmoothScale 4;
+  errorReduction 0.75;
+  relaxed { maxNonOrtho 75; }
+}
+
+// Merge tolerance
+mergeTolerance 1e-6;

@@ -1,0 +1,109 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+  \\    /   O peration     | Website:  https://openfoam.org
+  \\  /    A nd           | Version:  11
+  \\/     M anipulation  |
+  \*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      createPatchDict;
+}
+
+// 再構築前のシリアルメッシュで実行する前提でOK
+pointSync false;
+
+patches
+(
+    // ---------- A ----------
+    {
+        // 変換後のパッチ名（同名でもOK）
+        name            nonConformalCyclic_on_nonCoupleA1;
+        patchInfo
+        {
+            type            nonConformalCyclic;
+            neighbourPatch  nonConformalCyclic_on_nonCoupleA2;
+
+            originalPatch   nonCoupleA1;
+
+            // 幾何が素直なら none で良い
+            transformType   none;
+        }
+        constructFrom   patches;
+        patches         (nonCoupleA1);
+        setPatchFields  false;
+    }
+    {
+        name            nonConformalCyclic_on_nonCoupleA2;
+        patchInfo
+        {
+            type            nonConformalCyclic;
+            neighbourPatch  nonConformalCyclic_on_nonCoupleA1;
+            originalPatch   nonCoupleA2;
+            transformType   none;
+        }
+        constructFrom   patches;
+        patches         (nonCoupleA2);
+        setPatchFields  false;
+    }
+
+    // ---------- B ----------
+    {
+        name            nonConformalCyclic_on_nonCoupleB1;
+        patchInfo
+        {
+            type            nonConformalCyclic;
+            neighbourPatch  nonConformalCyclic_on_nonCoupleB2;
+            originalPatch   nonCoupleB1;
+            transformType   none;
+        }
+        constructFrom   patches;
+        patches         (nonCoupleB1);
+        setPatchFields  false;
+    }
+    {
+        name            nonConformalCyclic_on_nonCoupleB2;
+        patchInfo
+        {
+            type            nonConformalCyclic;
+            neighbourPatch  nonConformalCyclic_on_nonCoupleB1;
+            originalPatch   nonCoupleB2;
+            transformType   none;
+        }
+        constructFrom   patches;
+        patches         (nonCoupleB2);
+        setPatchFields  false;
+    }
+
+    // ---------- C ----------
+    {
+        name            nonConformalCyclic_on_nonCoupleC1;
+        patchInfo
+        {
+            type            nonConformalCyclic;
+            neighbourPatch  nonConformalCyclic_on_nonCoupleC2;
+            originalPatch   nonCoupleC1;
+            transformType   none;
+        }
+        constructFrom   patches;
+        patches         (nonCoupleC1);
+        setPatchFields  false;
+    }
+    {
+        name            nonConformalCyclic_on_nonCoupleC2;
+        patchInfo
+        {
+            type            nonConformalCyclic;
+            neighbourPatch  nonConformalCyclic_on_nonCoupleC1;
+            originalPatch   nonCoupleC2;
+            transformType   none;
+        }
+        constructFrom   patches;
+        patches         (nonCoupleC2);
+        setPatchFields  false;
+    }
+);

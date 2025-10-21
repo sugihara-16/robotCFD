@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+//   =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "constant";
+    object          MRFProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+MRF1
+{
+    cellZone    innerCylinder_A;
+    active      yes;
+    origin      (0.19 0 -0.292);
+    axis        (0 1 0);
+    // omega       -3141.592653589793;   // rad/s = -30000 rpm
+    omega       -1500;
+}
+
+MRF2
+{
+    cellZone    innerCylinder_B;
+    active      yes;
+    origin      (-0.19 0 -0.292);
+    axis        (0 1 0);
+    // omega       -3141.592653589793;
+    omega       -1000;
+}
+
+MRF3
+{
+    cellZone    innerCylinder_C;
+    active      yes;
+    origin      (0 0 0.292);
+    axis        (0 1 0);
+    omega       -500;
+}
